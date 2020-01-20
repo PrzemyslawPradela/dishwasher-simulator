@@ -1,12 +1,71 @@
+/**
+ * @author Przemysław Pradela
+ * @email przemyslaw.pradela@gmail.com
+ * @create date 2020-01-20 14:29:57
+ * @modify date 2020-01-20 14:34:33
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <sys/types.h>
 #include <unistd.h>
 
+#define PERMS 0644
+
+struct my_msgbuf
+{
+	long mtype;
+	char mtext[200];
+};
+
+/*
+ * Function: progressbar
+ * Funkcja służąca do wizualizacji postępu danego zadania
+ *
+ * Parameters:
+ * progress_speed - szybkość wykonywania się zadania
+ * task - nazwa zadania
+ *
+ * Returns:
+ * void.
+ */
 void progressbar(float progress_speed, char *task);
 
 int main()
 {
+	struct my_msgbuf buf;
+	int msqid;
 	char choice;
+	key_t key;
+	pid_t child_pid[3];
+
+	if ((key = ftok(".", 'B')) == -1)
+	{
+		perror("ftok");
+		exit(1);
+	}
+
+	if ((msqid = msgget(key, PERMS | IPC_CREAT)) == -1)
+	{
+		perror("msgget");
+		exit(1);
+	}
+
+	if ((child_pid[0] = fork()) == -1)
+	{
+		perror("fork");
+		exit(1);
+	}
+	else if (child_pid[0] == 0)
+	{
+		if (execl("/usr/bin/konsole", "konsole", "-e", "heater", NULL) == -1)
+		{
+			perror("execl");
+			exit(1);
+		}
+	}
 
 	while (1)
 	{
@@ -81,7 +140,7 @@ int main()
 			break;
 
 		default:
-			printf("Nie ma takiej opcji (%c) w menu!", choice);
+			printf("Nie ma takiej opcji (%c) w menu!\n", choice);
 			break;
 		}
 
