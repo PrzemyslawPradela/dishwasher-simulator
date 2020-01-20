@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 14:29:57
- * @modify date 2020-01-20 23:03:48
+ * @modify date 2020-01-20 23:59:50
  */
 
 #include <stdio.h>
@@ -23,11 +23,11 @@ struct my_msgbuf
 
 /*
  * Function: progressbar
- * Funkcja służąca do wizualizacji postępu danego zadania
+ * Funkcja służąca do wizualizacji postępu danego zadania.
  *
  * Parameters:
- * progress_speed - szybkość wykonywania się zadania
- * task - nazwa zadania
+ * progress_speed - szybkość wykonywania się zadania.
+ * task - nazwa zadania.
  *
  * Returns:
  * void.

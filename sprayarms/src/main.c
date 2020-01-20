@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 22:38:56
- * @modify date 2020-01-20 23:04:06
+ * @modify date 2020-01-21 00:00:31
  * @desc [description]
  */
 
@@ -12,6 +12,7 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 
 #define PERMS 0644
@@ -22,12 +23,36 @@ struct my_msgbuf
 	char mtext[200];
 };
 
+/*
+ * Function: rand50
+ * Funkcja zwracająca 0 lub 1 z równym prawdopodobieństwem.
+ *
+ * Returns:
+ * int.
+ */
+int rand50();
+
+/*
+ * Function: rand50
+ * Funkcja zwracająca 0 z prawdopodobieństwiem 75%
+ * lub 0 z prawdopodobieństwem 25%.
+ *
+ * Returns:
+ * int.
+ */
+int rand75();
+
 int main()
 {
 	struct my_msgbuf buf;
 	int msqid;
+	int failure;
 	key_t key;
 	pid_t main;
+
+	srand(time(NULL));
+
+	failure = rand75();
 
 	if ((key = ftok("/tmp/msgq.txt", 'B')) == -1)
 	{
@@ -58,4 +83,14 @@ int main()
 	main = atoi(buf.mtext);
 
 	return (0);
+}
+
+int rand50()
+{
+	return rand() & 1;
+}
+
+int rand75()
+{
+	return rand50() | rand50();
 }
