@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/types.h>
@@ -39,9 +40,11 @@ int main()
 	int msqid;
 	char choice;
 	key_t key;
-	pid_t child_pid[3];
+	pid_t parts[3];
 
-	if ((key = ftok(".", 'B')) == -1)
+	system("touch /tmp/msgq.txt");
+
+	if ((key = ftok("/tmp/msgq.txt", 'B')) == -1)
 	{
 		perror("ftok");
 		exit(1);
@@ -53,16 +56,21 @@ int main()
 		exit(1);
 	}
 
-	if ((child_pid[0] = fork()) == -1)
+	for (size_t i = 0; i < 3; i++)
 	{
-		perror("fork");
-		exit(1);
-	}
-	else if (child_pid[0] == 0)
-	{
-		if (execl("/usr/bin/konsole", "konsole", "-e", "heater", NULL) == -1)
+		if (msgrcv(msqid, &buf, sizeof(buf.mtext), 1, 0) == -1)
 		{
-			perror("execl");
+			perror("msgrcv");
+			exit(1);
+		}
+
+		parts[i] = atoi(buf.mtext);
+
+		buf.mtype = parts[i];
+		sprintf(buf.mtext, "%d", getpid());
+		if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+		{
+			perror("msgsnd");
 			exit(1);
 		}
 	}
@@ -135,6 +143,14 @@ int main()
 			break;
 
 		case '0':
+			if (msgctl(msqid, IPC_RMID, NULL) == -1)
+			{
+				perror("msgctl");
+				exit(1);
+			}
+
+			system("rm /tmp/msgq.txt");
+
 			progressbar(0.02, "Wylaczanie");
 			exit(0);
 			break;
