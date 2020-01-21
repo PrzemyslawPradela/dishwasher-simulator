@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 14:29:57
- * @modify date 2020-01-21 15:15:34
+ * @modify date 2020-01-22 00:44:29
  */
 
 #include <stdio.h>
@@ -119,14 +119,12 @@ int main()
 				parts_info[i] = atoi(buf.mtext);
 			}
 
-			printf("%d\t%d\t%d\n", parts_info[0], parts_info[1], parts_info[2]);
-
 			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
 			{
 				for (size_t i = 0; i < 3; i++)
 				{
 					buf.mtype = parts[i];
-					sprintf(buf.mtext, "%s", "stop");
+					strcpy(buf.mtext, "stop");
 					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
 					{
 						perror("msgsnd");
@@ -134,26 +132,26 @@ int main()
 					}
 				}
 
-				if (parts_info[0] == 0 && parts_info[1] == 0 && parts_info[2] == 0)
+				if ((parts_info[0] == 0) && (parts_info[1] == 0) && (parts_info[2] == 0))
 				{
-					printf("AWARIA GRZAŁKI!\n");
+					printf("AWARIA GRZALKI!\n");
 					printf("AWARIA POMPY!\n");
 					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
 					exit(1);
 				}
-				else if (parts_info[0] == 0 && parts_info[1] == 0)
+				else if ((parts_info[0] == 0) && (parts_info[1] == 0))
 				{
-					printf("AWARIA GRZAŁKI!\n");
+					printf("AWARIA GRZALKI!\n");
 					printf("AWARIA POMPY!\n");
 					exit(1);
 				}
-				else if (parts_info[0] == 0 && parts_info[2] == 0)
+				else if ((parts_info[0] == 0) && (parts_info[2] == 0))
 				{
-					printf("AWARIA GRZAŁKI!\n");
+					printf("AWARIA GRZALKI!\n");
 					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
 					exit(1);
 				}
-				else if (parts_info[1] == 0 && parts_info[2] == 0)
+				else if ((parts_info[1] == 0) && (parts_info[2] == 0))
 				{
 					printf("AWARIA POMPY!\n");
 					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
@@ -161,7 +159,7 @@ int main()
 				}
 				else if (parts_info[0] == 0)
 				{
-					printf("AWARIA GRZAŁKI!\n");
+					printf("AWARIA GRZALKI!\n");
 					exit(1);
 				}
 				else if (parts_info[1] == 0)
@@ -176,30 +174,644 @@ int main()
 				}
 			}
 
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "wst");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+
+				if (i == 0)
+				{
+					printf("Trwa podgrzewanie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 1)
+				{
+					printf("Trwa pobieranie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 2)
+				{
+					printf("Trwa mycie naczyn...\n");
+					fflush(stdout);
+				}
+
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), i + 1, 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+			}
 			break;
 
 		case '2':
-			printf("Wybor %c", choice);
+			for (size_t i = 0; i < 3; i++)
+			{
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+
+				parts_info[i] = atoi(buf.mtext);
+			}
+
+			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					buf.mtype = parts[i];
+					strcpy(buf.mtext, "stop");
+					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+					{
+						perror("msgsnd");
+						exit(1);
+					}
+				}
+
+				if ((parts_info[0] == 0) && (parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[1] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0)
+				{
+					printf("AWARIA GRZALKI!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else
+				{
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+			}
+
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "nor");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+
+				if (i == 0)
+				{
+					printf("Trwa podgrzewanie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 1)
+				{
+					printf("Trwa pobieranie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 2)
+				{
+					printf("Trwa mycie naczyn...\n");
+					fflush(stdout);
+				}
+
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), i + 1, 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+			}
 			break;
 
 		case '3':
-			printf("Wybor %c", choice);
+			for (size_t i = 0; i < 3; i++)
+			{
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+
+				parts_info[i] = atoi(buf.mtext);
+			}
+
+			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					buf.mtype = parts[i];
+					strcpy(buf.mtext, "stop");
+					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+					{
+						perror("msgsnd");
+						exit(1);
+					}
+				}
+
+				if ((parts_info[0] == 0) && (parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[1] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0)
+				{
+					printf("AWARIA GRZALKI!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else
+				{
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+			}
+
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "eco");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+
+				if (i == 0)
+				{
+					printf("Trwa podgrzewanie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 1)
+				{
+					printf("Trwa pobieranie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 2)
+				{
+					printf("Trwa mycie naczyn...\n");
+					fflush(stdout);
+				}
+
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), i + 1, 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+			}
 			break;
 
 		case '4':
-			printf("Wybor %c", choice);
+			for (size_t i = 0; i < 3; i++)
+			{
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+
+				parts_info[i] = atoi(buf.mtext);
+			}
+
+			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					buf.mtype = parts[i];
+					strcpy(buf.mtext, "stop");
+					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+					{
+						perror("msgsnd");
+						exit(1);
+					}
+				}
+
+				if ((parts_info[0] == 0) && (parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[1] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0)
+				{
+					printf("AWARIA GRZALKI!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else
+				{
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+			}
+
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "int");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+
+				if (i == 0)
+				{
+					printf("Trwa podgrzewanie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 1)
+				{
+					printf("Trwa pobieranie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 2)
+				{
+					printf("Trwa mycie naczyn...\n");
+					fflush(stdout);
+				}
+
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), i + 1, 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+			}
 			break;
 
 		case '5':
-			printf("Wybor %c", choice);
+			for (size_t i = 0; i < 3; i++)
+			{
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+
+				parts_info[i] = atoi(buf.mtext);
+			}
+
+			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					buf.mtype = parts[i];
+					strcpy(buf.mtext, "stop");
+					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+					{
+						perror("msgsnd");
+						exit(1);
+					}
+				}
+
+				if ((parts_info[0] == 0) && (parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[1] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0)
+				{
+					printf("AWARIA GRZALKI!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else
+				{
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+			}
+
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "bio");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+
+				if (i == 0)
+				{
+					printf("Trwa podgrzewanie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 1)
+				{
+					printf("Trwa pobieranie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 2)
+				{
+					printf("Trwa mycie naczyn...\n");
+					fflush(stdout);
+				}
+
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), i + 1, 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+			}
 			break;
 
 		case '6':
-			printf("Wybor %c", choice);
+			for (size_t i = 0; i < 3; i++)
+			{
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+
+				parts_info[i] = atoi(buf.mtext);
+			}
+
+			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					buf.mtype = parts[i];
+					strcpy(buf.mtext, "stop");
+					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+					{
+						perror("msgsnd");
+						exit(1);
+					}
+				}
+
+				if ((parts_info[0] == 0) && (parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[1] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0)
+				{
+					printf("AWARIA GRZALKI!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else
+				{
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+			}
+
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "eks");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+
+				if (i == 0)
+				{
+					printf("Trwa podgrzewanie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 1)
+				{
+					printf("Trwa pobieranie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 2)
+				{
+					printf("Trwa mycie naczyn...\n");
+					fflush(stdout);
+				}
+
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), i + 1, 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+			}
 			break;
 
 		case '7':
-			printf("Wybor %c", choice);
+			for (size_t i = 0; i < 3; i++)
+			{
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+
+				parts_info[i] = atoi(buf.mtext);
+			}
+
+			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					buf.mtype = parts[i];
+					strcpy(buf.mtext, "stop");
+					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+					{
+						perror("msgsnd");
+						exit(1);
+					}
+				}
+
+				if ((parts_info[0] == 0) && (parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[1] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else if ((parts_info[0] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA GRZALKI!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if ((parts_info[1] == 0) && (parts_info[2] == 0))
+				{
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0)
+				{
+					printf("AWARIA GRZALKI!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else
+				{
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+			}
+
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "wyp");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+
+				if (i == 0)
+				{
+					printf("Trwa podgrzewanie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 1)
+				{
+					printf("Trwa pobieranie wody...\n");
+					fflush(stdout);
+				}
+				else if (i == 2)
+				{
+					printf("Trwa mycie naczyn...\n");
+					fflush(stdout);
+				}
+
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), i + 1, 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+			}
 			break;
 
 		case '9':
@@ -300,7 +912,7 @@ int main()
 					break;
 
 				default:
-					printf("Niepoprawna opcja\n");
+					printf("Niepoprawna opcja!\n");
 					break;
 				}
 
@@ -312,6 +924,18 @@ int main()
 			break;
 
 		case '0':
+			for (size_t i = 0; i < 3; i++)
+			{
+				buf.mtype = parts[i];
+				strcpy(buf.mtext, "stop");
+				if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+				{
+					perror("msgsnd");
+					exit(1);
+				}
+				sleep(3);
+			}
+
 			if (msgctl(msqid, IPC_RMID, NULL) == -1)
 			{
 				perror("msgctl");
@@ -325,7 +949,7 @@ int main()
 			break;
 
 		default:
-			printf("Nie ma takiej opcji (%c) w menu!\n", choice);
+			printf("Niepoprawna opcja!\n");
 			break;
 		}
 

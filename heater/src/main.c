@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 22:31:42
- * @modify date 2020-01-21 15:15:30
+ * @modify date 2020-01-22 00:43:57
  * @desc [description]
  */
 
@@ -41,6 +41,19 @@ int rand50();
  * int.
  */
 int rand75();
+
+/*
+ * Function: progressbar
+ * Funkcja służąca do wizualizacji postępu danego zadania.
+ *
+ * Parameters:
+ * progress_speed - szybkość wykonywania się zadania.
+ * task - nazwa zadania.
+ *
+ * Returns:
+ * void.
+ */
+void progressbar(float progress_speed, char *task);
 
 int main()
 {
@@ -82,10 +95,13 @@ int main()
 
 	while (1)
 	{
-		printf("Grzałka wlaczona\n");
-		ready = rand75();
+		system("clear");
 
-		printf("%d\n", ready);
+		ready = rand75();
+		if (ready)
+		{
+			printf("Grzalka wlaczona\n");
+		}
 
 		buf.mtype = main;
 		sprintf(buf.mtext, "%d", ready);
@@ -99,8 +115,6 @@ int main()
 		{
 			while (1)
 			{
-				printf("AWARIA GRZAŁKI!\n");
-
 				msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), IPC_NOWAIT);
 
 				if (strcmp(buf.mtext, "stop") == 0)
@@ -108,6 +122,7 @@ int main()
 					exit(1);
 				}
 
+				printf("AWARIA GRZALKI!\n");
 				sleep(3);
 			}
 		}
@@ -122,6 +137,84 @@ int main()
 		{
 			break;
 		}
+
+		if (strcmp(buf.mtext, "wst") == 0)
+		{
+			progressbar(0.02, "Podgrzewanie wody");
+			buf.mtype = 1;
+			strcpy(buf.mtext, "done1");
+			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+			{
+				perror("msgsnd");
+				exit(1);
+			}
+		}
+		else if (strcmp(buf.mtext, "nor") == 0)
+		{
+			progressbar(0.02, "Podgrzewanie wody");
+			buf.mtype = 1;
+			strcpy(buf.mtext, "done1");
+			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+			{
+				perror("msgsnd");
+				exit(1);
+			}
+		}
+		else if (strcmp(buf.mtext, "eco") == 0)
+		{
+			progressbar(0.02, "Podgrzewanie wody");
+			buf.mtype = 1;
+			strcpy(buf.mtext, "done1");
+			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+			{
+				perror("msgsnd");
+				exit(1);
+			}
+		}
+		else if (strcmp(buf.mtext, "int") == 0)
+		{
+			progressbar(0.02, "Podgrzewanie wody");
+			buf.mtype = 1;
+			strcpy(buf.mtext, "done1");
+			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+			{
+				perror("msgsnd");
+				exit(1);
+			}
+		}
+		else if (strcmp(buf.mtext, "bio") == 0)
+		{
+			progressbar(0.02, "Podgrzewanie wody");
+			buf.mtype = 1;
+			strcpy(buf.mtext, "done1");
+			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+			{
+				perror("msgsnd");
+				exit(1);
+			}
+		}
+		else if (strcmp(buf.mtext, "eks") == 0)
+		{
+			progressbar(0.02, "Podgrzewanie wody");
+			buf.mtype = 1;
+			strcpy(buf.mtext, "done1");
+			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+			{
+				perror("msgsnd");
+				exit(1);
+			}
+		}
+		else if (strcmp(buf.mtext, "wyp") == 0)
+		{
+			progressbar(0.02, "Podgrzewanie wody");
+			buf.mtype = 1;
+			strcpy(buf.mtext, "done1");
+			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+			{
+				perror("msgsnd");
+				exit(1);
+			}
+		}
 	}
 
 	return (0);
@@ -135,4 +228,29 @@ int rand50()
 int rand75()
 {
 	return rand50() | rand50();
+}
+
+void progressbar(float progress_speed, char *task)
+{
+	int barwidth = 20;
+	float progress = 0.0;
+
+	while (progress < 1.0)
+	{
+		printf("%3d%% %s\r", (int)(progress * 100.0), task);
+		int pos = barwidth * progress;
+		for (int i = 0; i < barwidth; i++)
+		{
+			if (i <= pos)
+				printf("\u258A");
+			else
+				printf(" ");
+		}
+		fflush(stdout);
+
+		progress += progress_speed;
+
+		usleep(100000);
+	}
+	printf("100%% %s\r\n", task);
 }
