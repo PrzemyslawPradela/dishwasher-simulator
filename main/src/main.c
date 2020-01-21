@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 14:29:57
- * @modify date 2020-01-20 23:59:50
+ * @modify date 2020-01-21 01:07:26
  */
 
 #include <stdio.h>
@@ -39,6 +39,7 @@ int main()
 	struct my_msgbuf buf;
 	int msqid;
 	char choice;
+	char help_choice;
 	key_t key;
 	pid_t parts[3];
 
@@ -56,24 +57,24 @@ int main()
 		exit(1);
 	}
 
-	for (size_t i = 0; i < 3; i++)
-	{
-		if (msgrcv(msqid, &buf, sizeof(buf.mtext), 1, 0) == -1)
-		{
-			perror("msgrcv");
-			exit(1);
-		}
+	// for (size_t i = 0; i < 3; i++)
+	// {
+	// 	if (msgrcv(msqid, &buf, sizeof(buf.mtext), 1, 0) == -1)
+	// 	{
+	// 		perror("msgrcv");
+	// 		exit(1);
+	// 	}
 
-		parts[i] = atoi(buf.mtext);
+	// 	parts[i] = atoi(buf.mtext);
 
-		buf.mtype = parts[i];
-		sprintf(buf.mtext, "%d", getpid());
-		if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
-		{
-			perror("msgsnd");
-			exit(1);
-		}
-	}
+	// 	buf.mtype = parts[i];
+	// 	sprintf(buf.mtext, "%d", getpid());
+	// 	if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+	// 	{
+	// 		perror("msgsnd");
+	// 		exit(1);
+	// 	}
+	// }
 
 	while (1)
 	{
@@ -88,16 +89,15 @@ int main()
 		printf("|1. Wstepne zmywanie                       |\n");
 		printf("|2. Normalny                               |\n");
 		printf("|3. Oszczedny (ECO)    	                   |\n");
-		printf("|4. Rosnaco                            	   |\n");
-		printf("|5. Intensywny                       	   |\n");
-		printf("|6. BIO                                    |\n");
-		printf("|7. Szybki/Ekspresowy                      |\n");
-		printf("|8. Wyparzanie                             |\n");
+		printf("|4. Intensywny                       	   |\n");
+		printf("|5. BIO                                    |\n");
+		printf("|6. Szybki/Ekspresowy                      |\n");
+		printf("|7. Wyparzanie                             |\n");
 		printf("|------------------------------------------|\n");
 		printf("|9. Pomoc                                  |\n");
 		printf("|------------------------------------------|\n");
 		printf("|------------------------------------------|\n");
-		printf("|0.Zakoncz                                 |\n");
+		printf("|0. Zakoncz                                |\n");
 		printf("|------------------------------------------|\n");
 		printf("********************************************\n");
 		printf("\n");
@@ -134,12 +134,111 @@ int main()
 			printf("Wybor %c", choice);
 			break;
 
-		case '8':
-			printf("Wybor %c", choice);
-			break;
-
 		case '9':
-			printf("Wybor %c", choice);
+			while (1)
+			{
+				system("clear");
+
+				printf("|------------------------------------------|\n");
+				printf("|                   POMOC                  |\n");
+				printf("|------------------------------------------|\n");
+				printf("|1. Wstepne zmywanie                       |\n");
+				printf("|2. Normalny                               |\n");
+				printf("|3. Oszczedny (ECO)    	                   |\n");
+				printf("|4. Intensywny                       	   |\n");
+				printf("|5. BIO                                    |\n");
+				printf("|6. Szybki/Ekspresowy                      |\n");
+				printf("|7. Wyparzanie                             |\n");
+				printf("|------------------------------------------|\n");
+				printf("|0. Powrot                                 |\n");
+				printf("|------------------------------------------|\n");
+				printf("\n");
+
+				help_choice = getchar();
+
+				if (help_choice == '0')
+					break;
+
+				switch (help_choice)
+				{
+				case '1':
+					printf("|------------------------------------------|\n");
+					printf("|             Wstepne zmywanie             |\n");
+					printf("|------------------------------------------|\n");
+					printf("|Program ten sluzy do mycia mocno zabrudzo-|\n");
+					printf("|nych naczyn, gdzie nalezy je wczesniej na-|\n");
+					printf("|moczyc by zabrudzenia zniknely.           |\n");
+					printf("|------------------------------------------|\n");
+					break;
+
+				case '2':
+					printf("|------------------------------------------|\n");
+					printf("|                 Normalny                 |\n");
+					printf("|------------------------------------------|\n");
+					printf("|Program wybieramy gdy naczynia sa srednio |\n");
+					printf("|zabrudzone.                               |\n");
+					printf("|------------------------------------------|\n");
+					break;
+
+				case '3':
+					printf("|------------------------------------------|\n");
+					printf("|              Oszczedny (ECO)             |\n");
+					printf("|------------------------------------------|\n");
+					printf("|Szybkie mycie w temperaturze ok. 55°C     |\n");
+					printf("|------------------------------------------|\n");
+					break;
+
+				case '4':
+					printf("|------------------------------------------|\n");
+					printf("|                Intensywny                |\n");
+					printf("|------------------------------------------|\n");
+					printf("|Program intensywny wybieramy gdy garnki   |\n");
+					printf("|oraz naczynia są bardzo zabrudzone.       |\n");
+					printf("|Sa one zmywane w wysokiej temperaturze.   |\n");
+					printf("|------------------------------------------|\n");
+					break;
+
+				case '5':
+					printf("|------------------------------------------|\n");
+					printf("|                   BIO                    |\n");
+					printf("|------------------------------------------|\n");
+					printf("|Program przeznaczony do naczyn, ktore sa  |\n");
+					printf("|wrazliwe na dzialanie silnych plynow      |\n");
+					printf("|czyszczacych. Temperatura zmywania nie    |\n");
+					printf("|przekracza 50°C.                          |\n");
+					printf("|------------------------------------------|\n");
+					break;
+
+				case '6':
+					printf("|------------------------------------------|\n");
+					printf("|             Szybki/Ekspresowy            |\n");
+					printf("|------------------------------------------|\n");
+					printf("|Sluzy do zmywania naczyn lekko zabrudzo-  |\n");
+					printf("|nych oraz do odswiezenia naczyn nieuzywa- |\n");
+					printf("|nych. Czas trwania zmywania jest znacznie |\n");
+					printf("|skrocony.                                 |\n");
+					printf("|------------------------------------------|\n");
+					break;
+
+				case '7':
+					printf("|------------------------------------------|\n");
+					printf("|                Wyparzanie                |\n");
+					printf("|------------------------------------------|\n");
+					printf("|Zmywarka wyparza naczynia uzywajac do tego|\n");
+					printf("|bardzo wysokiej temperatury. Można w niej |\n");
+					printf("|wyparzac butelki dzieciece bez potrzeby   |\n");
+					printf("|zakupu dodatkowego sterylizatora.         |\n");
+					printf("|------------------------------------------|\n");
+					break;
+
+				default:
+					printf("Niepoprawna opcja\n");
+					break;
+				}
+
+				getchar();
+				getchar();
+			}
 			break;
 
 		case '0':
@@ -159,6 +258,8 @@ int main()
 			printf("Nie ma takiej opcji (%c) w menu!\n", choice);
 			break;
 		}
+
+		printf("\nNacisnij Enter, aby kontynuowac...\n");
 
 		getchar();
 		getchar();
