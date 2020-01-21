@@ -1,8 +1,8 @@
 /**
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
- * @create date 2020-01-20 22:38:36
- * @modify date 2020-01-21 00:00:06
+ * @create date 2020-01-20 22:31:42
+ * @modify date 2020-01-21 15:15:25
  * @desc [description]
  */
 
@@ -46,13 +46,11 @@ int main()
 {
 	struct my_msgbuf buf;
 	int msqid;
-	int failure;
+	int ready;
 	key_t key;
 	pid_t main;
 
 	srand(time(NULL));
-
-	failure = rand75();
 
 	if ((key = ftok("/tmp/msgq.txt", 'B')) == -1)
 	{
@@ -81,6 +79,50 @@ int main()
 	}
 
 	main = atoi(buf.mtext);
+
+	while (1)
+	{
+		printf("Pompa wlaczona\n");
+		ready = rand75();
+
+		printf("%d\n", ready);
+
+		buf.mtype = main;
+		sprintf(buf.mtext, "%d", ready);
+		if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+		{
+			perror("msgsnd");
+			exit(1);
+		}
+
+		if (!ready)
+		{
+			while (1)
+			{
+				printf("AWARIA POMPY!\n");
+
+				msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), IPC_NOWAIT);
+
+				if (strcmp(buf.mtext, "stop") == 0)
+				{
+					exit(1);
+				}
+
+				sleep(3);
+			}
+		}
+
+		if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+		{
+			perror("msgrcv");
+			exit(1);
+		}
+
+		if (strcmp(buf.mtext, "stop") == 0)
+		{
+			break;
+		}
+	}
 
 	return (0);
 }

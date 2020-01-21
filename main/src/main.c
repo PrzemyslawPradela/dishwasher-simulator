@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 14:29:57
- * @modify date 2020-01-21 01:07:26
+ * @modify date 2020-01-21 15:15:34
  */
 
 #include <stdio.h>
@@ -38,6 +38,7 @@ int main()
 {
 	struct my_msgbuf buf;
 	int msqid;
+	int parts_info[3];
 	char choice;
 	char help_choice;
 	key_t key;
@@ -57,24 +58,24 @@ int main()
 		exit(1);
 	}
 
-	// for (size_t i = 0; i < 3; i++)
-	// {
-	// 	if (msgrcv(msqid, &buf, sizeof(buf.mtext), 1, 0) == -1)
-	// 	{
-	// 		perror("msgrcv");
-	// 		exit(1);
-	// 	}
+	for (size_t i = 0; i < 3; i++)
+	{
+		if (msgrcv(msqid, &buf, sizeof(buf.mtext), 1, 0) == -1)
+		{
+			perror("msgrcv");
+			exit(1);
+		}
 
-	// 	parts[i] = atoi(buf.mtext);
+		parts[i] = atoi(buf.mtext);
 
-	// 	buf.mtype = parts[i];
-	// 	sprintf(buf.mtext, "%d", getpid());
-	// 	if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
-	// 	{
-	// 		perror("msgsnd");
-	// 		exit(1);
-	// 	}
-	// }
+		buf.mtype = parts[i];
+		sprintf(buf.mtext, "%d", getpid());
+		if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+		{
+			perror("msgsnd");
+			exit(1);
+		}
+	}
 
 	while (1)
 	{
@@ -107,7 +108,74 @@ int main()
 		switch (choice)
 		{
 		case '1':
-			progressbar(0.004, "Wstepne zmywanie");
+			for (size_t i = 0; i < 3; i++)
+			{
+				if (msgrcv(msqid, &buf, sizeof(buf.mtext), getpid(), 0) == -1)
+				{
+					perror("msgrcv");
+					exit(1);
+				}
+
+				parts_info[i] = atoi(buf.mtext);
+			}
+
+			printf("%d\t%d\t%d\n", parts_info[0], parts_info[1], parts_info[2]);
+
+			if (parts_info[0] == 0 || parts_info[1] == 0 || parts_info[2] == 0)
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					buf.mtype = parts[i];
+					sprintf(buf.mtext, "%s", "stop");
+					if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
+					{
+						perror("msgsnd");
+						exit(1);
+					}
+				}
+
+				if (parts_info[0] == 0 && parts_info[1] == 0 && parts_info[2] == 0)
+				{
+					printf("AWARIA GRZAŁKI!\n");
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0 && parts_info[1] == 0)
+				{
+					printf("AWARIA GRZAŁKI!\n");
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0 && parts_info[2] == 0)
+				{
+					printf("AWARIA GRZAŁKI!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0 && parts_info[2] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+				else if (parts_info[0] == 0)
+				{
+					printf("AWARIA GRZAŁKI!\n");
+					exit(1);
+				}
+				else if (parts_info[1] == 0)
+				{
+					printf("AWARIA POMPY!\n");
+					exit(1);
+				}
+				else
+				{
+					printf("AWARIA RAMION SPRYSKUJACYCH!\n");
+					exit(1);
+				}
+			}
+
 			break;
 
 		case '2':
@@ -236,6 +304,8 @@ int main()
 					break;
 				}
 
+				printf("\nNacisnij Enter, aby kontynuowac...");
+
 				getchar();
 				getchar();
 			}
@@ -259,7 +329,7 @@ int main()
 			break;
 		}
 
-		printf("\nNacisnij Enter, aby kontynuowac...\n");
+		printf("\nNacisnij Enter, aby kontynuowac...");
 
 		getchar();
 		getchar();
