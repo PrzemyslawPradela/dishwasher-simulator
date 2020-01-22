@@ -2,8 +2,8 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 22:31:42
- * @modify date 2020-01-22 00:43:47
- * @desc [description]
+ * @modify date 2020-01-22 01:09:12
+ * @desc A water pump controller
  */
 
 #include <stdio.h>

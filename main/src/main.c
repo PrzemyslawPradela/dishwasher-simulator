@@ -2,7 +2,8 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 14:29:57
- * @modify date 2020-01-22 00:44:29
+ * @modify date 2020-01-22 01:08:44
+ * @desc A main dishwasher controller
  */
 
 #include <stdio.h>
