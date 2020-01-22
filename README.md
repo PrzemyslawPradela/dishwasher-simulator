@@ -30,7 +30,7 @@ Project is created with:
         $ make
         $ ./bin/main
         ```
-    - Run a pump controller
+    - Run a water pump controller
         ```bash
         $ cd ../dishwasher-simulator/pump
         $ mkdir bin
