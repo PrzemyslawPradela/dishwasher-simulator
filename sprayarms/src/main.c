@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 22:31:42
- * @modify date 2020-02-13 05:08:12
+ * @modify date 2020-02-13 14:35:57
  * @desc A spray arms controller
  */
 
@@ -34,7 +34,7 @@ int rand50();
 
 /*
  * Function: rand50
- * Funkcja zwracająca 0 z prawdopodobieństwiem 75%
+ * Funkcja zwracająca 1 z prawdopodobieństwiem 75%
  * lub 0 z prawdopodobieństwem 25%.
  *
  * Returns:
