@@ -2,7 +2,7 @@
  * @author Przemysław Pradela
  * @email przemyslaw.pradela@gmail.com
  * @create date 2020-01-20 22:31:42
- * @modify date 2020-01-22 01:09:12
+ * @modify date 2020-02-13 05:06:43
  * @desc A water pump controller
  */
 
@@ -140,7 +140,7 @@ int main()
 
 		if (strcmp(buf.mtext, "wst") == 0)
 		{
-			progressbar(0.02, "Pobieranie wody");
+			progressbar(0.03, "Pobieranie wody");
 			buf.mtype = 2;
 			strcpy(buf.mtext, "done2");
 			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
@@ -151,7 +151,7 @@ int main()
 		}
 		else if (strcmp(buf.mtext, "nor") == 0)
 		{
-			progressbar(0.02, "Pobieranie wody");
+			progressbar(0.003, "Pobieranie wody");
 			buf.mtype = 2;
 			strcpy(buf.mtext, "done2");
 			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
@@ -162,7 +162,7 @@ int main()
 		}
 		else if (strcmp(buf.mtext, "eco") == 0)
 		{
-			progressbar(0.02, "Pobieranie wody");
+			progressbar(0.07, "Pobieranie wody");
 			buf.mtype = 2;
 			strcpy(buf.mtext, "done2");
 			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
@@ -173,7 +173,7 @@ int main()
 		}
 		else if (strcmp(buf.mtext, "int") == 0)
 		{
-			progressbar(0.02, "Pobieranie wody");
+			progressbar(0.0089, "Pobieranie wody");
 			buf.mtype = 2;
 			strcpy(buf.mtext, "done2");
 			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
@@ -184,7 +184,7 @@ int main()
 		}
 		else if (strcmp(buf.mtext, "bio") == 0)
 		{
-			progressbar(0.02, "Pobieranie wody");
+			progressbar(0.003, "Pobieranie wody");
 			buf.mtype = 2;
 			strcpy(buf.mtext, "done2");
 			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
@@ -195,7 +195,7 @@ int main()
 		}
 		else if (strcmp(buf.mtext, "eks") == 0)
 		{
-			progressbar(0.02, "Pobieranie wody");
+			progressbar(0.008, "Pobieranie wody");
 			buf.mtype = 2;
 			strcpy(buf.mtext, "done2");
 			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
@@ -206,7 +206,7 @@ int main()
 		}
 		else if (strcmp(buf.mtext, "wyp") == 0)
 		{
-			progressbar(0.02, "Pobieranie wody");
+			progressbar(0.0001, "Pobieranie wody");
 			buf.mtype = 2;
 			strcpy(buf.mtext, "done2");
 			if (msgsnd(msqid, &buf, strlen(buf.mtext) + 1, 0) == -1)
